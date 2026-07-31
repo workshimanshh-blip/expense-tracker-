@@ -9,11 +9,11 @@ export default function AppLayout({
 }) {
   return (
     <DataProvider>
-      <div className="flex min-h-screen flex-1">
+      <div className="flex min-h-screen flex-1 bg-background">
         <Sidebar />
         <div className="flex flex-1 flex-col">
           {!isCloudSyncEnabled && (
-            <div className="bg-amber-50 px-4 py-2 text-center text-xs font-medium text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+            <div className="border-b border-border/60 bg-gold-light/10 px-4 py-2 text-center text-xs font-medium text-primary">
               Demo mode — data is saved only in this browser. Deploy with
               cloud sync enabled (see README) to use the Telegram bot and
               access your data from any device.

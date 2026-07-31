@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { motion } from "motion/react";
 import { useData } from "@/lib/data-context";
 import { CategoryIcon } from "./CategoryIcon";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 
 export function QuickAddBar({ onOpenDetailed }: { onOpenDetailed: () => void }) {
@@ -30,36 +32,36 @@ export function QuickAddBar({ onOpenDetailed }: { onOpenDetailed: () => void }) 
   }
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-      <p className="mb-3 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+    <div className="glass rounded-2xl p-4">
+      <p className="mb-3 text-sm font-medium text-muted-foreground">
         Quick add
       </p>
       <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
         {categories.map((c) => (
-          <button
+          <motion.button
             key={c.id}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setSelectedId(c.id)}
-            className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-medium transition ${
+            className={`flex shrink-0 cursor-pointer flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-medium transition-colors duration-150 ${
               selectedId === c.id
-                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10"
-                : "border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800"
+                ? "border-primary bg-primary/10"
+                : "border-border bg-secondary/40 hover:border-primary/40"
             }`}
           >
             <CategoryIcon icon={c.icon} color={c.color} size={16} />
-            <span className="text-neutral-700 dark:text-neutral-200">
-              {c.name}
-            </span>
-          </button>
+            <span className="text-foreground">{c.name}</span>
+          </motion.button>
         ))}
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={onOpenDetailed}
-          className="flex shrink-0 flex-col items-center gap-1 rounded-xl border border-dashed border-neutral-300 px-3 py-2 text-xs font-medium text-neutral-500 dark:border-neutral-700"
+          className="flex shrink-0 cursor-pointer flex-col items-center gap-1 rounded-xl border border-dashed border-border px-3 py-2 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:border-primary/40 hover:text-foreground"
         >
-          <span className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
+          <span className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-secondary">
             <Plus size={16} />
           </span>
           Detailed
-        </button>
+        </motion.button>
       </div>
       <div className="flex gap-2">
         <input
@@ -69,18 +71,18 @@ export function QuickAddBar({ onOpenDetailed }: { onOpenDetailed: () => void }) 
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && submit()}
-          className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 dark:border-neutral-700 dark:bg-neutral-800"
+          className="font-tabular w-full rounded-lg border border-input bg-secondary/50 px-3 py-2 text-sm text-foreground outline-none transition-colors duration-150 focus:border-ring focus:ring-2 focus:ring-ring/30"
         />
-        <button
+        <Button
           onClick={submit}
           disabled={!selectedId || !amount || saving}
-          className="shrink-0 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-600 disabled:opacity-40"
+          className="shrink-0"
         >
           Add
-        </button>
+        </Button>
       </div>
       {!selectedId && (
-        <p className="mt-2 text-xs text-neutral-400">
+        <p className="mt-2 text-xs text-muted-foreground">
           Pehle ek category chuno, phir amount daal ke Add karo.
         </p>
       )}

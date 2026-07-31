@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "motion/react";
 import { useData } from "@/lib/data-context";
 import { QuickAddBar } from "@/components/QuickAddBar";
 import { ExpenseForm } from "@/components/ExpenseForm";
@@ -17,25 +18,31 @@ export default function ExpensesPage() {
   }, [expenses, categoryFilter]);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
-          Expenses
-        </h1>
-        <p className="text-sm text-neutral-500">Har kharcha yahan track karo.</p>
-      </div>
+    <motion.div
+      initial="hidden"
+      animate="show"
+      variants={{ show: { transition: { staggerChildren: 0.08 } } }}
+      className="mx-auto max-w-2xl space-y-6"
+    >
+      <motion.div variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}>
+        <h1 className="font-display text-2xl text-foreground">Expenses</h1>
+        <p className="text-sm text-muted-foreground">Har kharcha yahan track karo.</p>
+      </motion.div>
 
-      <QuickAddBar onOpenDetailed={() => setShowForm(true)} />
+      <motion.div variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}>
+        <QuickAddBar onOpenDetailed={() => setShowForm(true)} />
+      </motion.div>
 
-      <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+      <motion.div
+        variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
+        className="glass rounded-2xl p-4"
+      >
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
-            History
-          </h2>
+          <h2 className="text-sm font-medium text-foreground">History</h2>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="rounded-lg border border-neutral-200 bg-neutral-50 px-2 py-1 text-xs outline-none dark:border-neutral-700 dark:bg-neutral-800"
+            className="cursor-pointer rounded-lg border border-input bg-secondary/50 px-2 py-1 text-xs text-foreground outline-none transition-colors duration-150 focus:border-ring"
           >
             <option value="all">All categories</option>
             {categories.map((c) => (
@@ -46,7 +53,7 @@ export default function ExpensesPage() {
           </select>
         </div>
         {loading ? (
-          <p className="py-10 text-center text-sm text-neutral-400">Loading...</p>
+          <p className="py-10 text-center text-sm text-muted-foreground">Loading...</p>
         ) : (
           <ExpenseList
             expenses={filtered}
@@ -54,9 +61,9 @@ export default function ExpensesPage() {
             onDelete={deleteExpense}
           />
         )}
-      </div>
+      </motion.div>
 
       {showForm && <ExpenseForm onClose={() => setShowForm(false)} />}
-    </div>
+    </motion.div>
   );
 }

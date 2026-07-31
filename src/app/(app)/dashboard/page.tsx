@@ -1,12 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Wallet, PiggyBank, Bell } from "lucide-react";
+import { PiggyBank, Bell } from "lucide-react";
+import { motion } from "motion/react";
 import { useData } from "@/lib/data-context";
 import { SummaryCard } from "@/components/SummaryCard";
 import { CategoryPieChart, type CategorySlice } from "@/components/CategoryPieChart";
 import { TrendChart } from "@/components/TrendChart";
 import { BudgetProgressBar } from "@/components/BudgetProgressBar";
+import { AuroraGlow } from "@/components/AuroraGlow";
+import { AnimatedNumber } from "@/components/AnimatedNumber";
 import {
   buildTrend,
   currentMonthKey,
@@ -21,6 +24,11 @@ const PERIODS: { value: Period; label: string }[] = [
   { value: "weekly", label: "Weekly" },
   { value: "monthly", label: "Monthly" },
 ];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0 },
+};
 
 export default function DashboardPage() {
   const { categories, expenses, budgets, loading } = useData();
@@ -67,31 +75,48 @@ export default function DashboardPage() {
   );
 
   if (loading) {
-    return <p className="py-20 text-center text-sm text-neutral-400">Loading...</p>;
+    return (
+      <p className="py-20 text-center text-sm text-muted-foreground">
+        Loading...
+      </p>
+    );
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
-          Dashboard
-        </h1>
-        <p className="text-sm text-neutral-500">
+    <motion.div
+      initial="hidden"
+      animate="show"
+      variants={{ show: { transition: { staggerChildren: 0.08 } } }}
+      className="mx-auto max-w-3xl space-y-6"
+    >
+      <motion.div variants={fadeUp}>
+        <h1 className="font-display text-2xl text-foreground">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">
           Is mahine ka overview — kitna kharcha, kahan kharcha.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <SummaryCard
-          label="Total spent this month"
-          value={formatCurrency(totalThisMonth)}
-          icon={Wallet}
+      <motion.div
+        variants={fadeUp}
+        className="glass relative overflow-hidden rounded-2xl p-6"
+      >
+        <AuroraGlow />
+        <p className="relative text-sm font-medium text-muted-foreground">
+          Total spent this month
+        </p>
+        <AnimatedNumber
+          value={totalThisMonth}
+          format={formatCurrency}
+          className="font-display font-tabular relative mt-1 block text-4xl text-foreground sm:text-5xl"
         />
+      </motion.div>
+
+      <motion.div variants={fadeUp} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <SummaryCard
           label="Remaining budget"
           value={remaining === null ? "Not set" : formatCurrency(remaining)}
           icon={PiggyBank}
-          tone={remaining !== null && remaining < 0 ? "warning" : "positive"}
+          tone={remaining !== null && remaining < 0 ? "danger" : "positive"}
         />
         <SummaryCard
           label="Upcoming renewals"
@@ -99,29 +124,27 @@ export default function DashboardPage() {
           icon={Bell}
           tone={upcomingRenewals.length > 0 ? "warning" : "neutral"}
         />
-      </div>
+      </motion.div>
 
-      <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <h2 className="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-200">
+      <motion.div variants={fadeUp} className="glass rounded-2xl p-4">
+        <h2 className="mb-4 text-sm font-medium text-foreground">
           Category-wise spend
         </h2>
         <CategoryPieChart data={pieData} />
-      </div>
+      </motion.div>
 
-      <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+      <motion.div variants={fadeUp} className="glass rounded-2xl p-4">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
-            Spending trend
-          </h2>
-          <div className="flex rounded-lg bg-neutral-100 p-0.5 text-xs dark:bg-neutral-800">
+          <h2 className="text-sm font-medium text-foreground">Spending trend</h2>
+          <div className="flex rounded-lg bg-secondary p-0.5 text-xs">
             {PERIODS.map((p) => (
               <button
                 key={p.value}
                 onClick={() => setPeriod(p.value)}
-                className={`rounded-md px-2.5 py-1 font-medium transition ${
+                className={`cursor-pointer rounded-md px-2.5 py-1 font-medium transition-colors duration-200 ${
                   period === p.value
-                    ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-neutral-50"
-                    : "text-neutral-500"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {p.label}
@@ -130,13 +153,11 @@ export default function DashboardPage() {
           </div>
         </div>
         <TrendChart data={trend} />
-      </div>
+      </motion.div>
 
       {budgetedCategories.length > 0 && (
-        <div className="space-y-4 rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-          <h2 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
-            Budget usage
-          </h2>
+        <motion.div variants={fadeUp} className="glass space-y-4 rounded-2xl p-4">
+          <h2 className="text-sm font-medium text-foreground">Budget usage</h2>
           {budgetedCategories.map((c) => {
             const budget = budgets.find(
               (b) => b.category_id === c.id && b.month === month,
@@ -154,8 +175,8 @@ export default function DashboardPage() {
               />
             );
           })}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

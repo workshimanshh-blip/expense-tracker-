@@ -1,9 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "motion/react";
 import { useData } from "@/lib/data-context";
 import { BudgetProgressBar } from "@/components/BudgetProgressBar";
+import { Button } from "@/components/ui/button";
 import { currentMonthKey, isInMonth } from "@/lib/utils";
+
+const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 export default function BudgetsPage() {
   const { categories, expenses, budgets, upsertBudget } = useData();
@@ -41,21 +45,22 @@ export default function BudgetsPage() {
   const overallBudget = budgetFor(null);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
-          Budgets
-        </h1>
-        <p className="text-sm text-neutral-500">
+    <motion.div
+      initial="hidden"
+      animate="show"
+      variants={{ show: { transition: { staggerChildren: 0.08 } } }}
+      className="mx-auto max-w-2xl space-y-6"
+    >
+      <motion.div variants={fadeUp}>
+        <h1 className="font-display text-2xl text-foreground">Budgets</h1>
+        <p className="text-sm text-muted-foreground">
           Is mahine ({month}) ke liye limits set karo.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="space-y-4 rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+      <motion.div variants={fadeUp} className="glass space-y-4 rounded-2xl p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
-            Overall budget
-          </h2>
+          <h2 className="text-sm font-medium text-foreground">Overall budget</h2>
           <div className="flex gap-2">
             <input
               type="number"
@@ -64,14 +69,11 @@ export default function BudgetsPage() {
               onChange={(e) =>
                 setDrafts((d) => ({ ...d, overall: e.target.value }))
               }
-              className="w-28 rounded-lg border border-neutral-200 bg-neutral-50 px-2 py-1 text-sm outline-none dark:border-neutral-700 dark:bg-neutral-800"
+              className="font-tabular w-28 rounded-lg border border-input bg-secondary/50 px-2 py-1 text-sm text-foreground outline-none transition-colors duration-150 focus:border-ring focus:ring-2 focus:ring-ring/30"
             />
-            <button
-              onClick={() => saveBudget(null, "overall")}
-              className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-medium text-white"
-            >
+            <Button size="sm" onClick={() => saveBudget(null, "overall")}>
               Save
-            </button>
+            </Button>
           </div>
         </div>
         <BudgetProgressBar
@@ -79,10 +81,10 @@ export default function BudgetsPage() {
           spent={totalSpend}
           limit={overallBudget?.monthly_limit ?? 0}
         />
-      </div>
+      </motion.div>
 
-      <div className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <h2 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+      <motion.div variants={fadeUp} className="glass space-y-5 rounded-2xl p-4">
+        <h2 className="text-sm font-medium text-foreground">
           Per-category budgets
         </h2>
         {categories.map((c) => {
@@ -91,7 +93,7 @@ export default function BudgetsPage() {
           return (
             <div key={c.id} className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                <span className="text-sm font-medium text-foreground">
                   {c.name}
                 </span>
                 <div className="flex gap-2">
@@ -102,14 +104,11 @@ export default function BudgetsPage() {
                     onChange={(e) =>
                       setDrafts((d) => ({ ...d, [c.id]: e.target.value }))
                     }
-                    className="w-24 rounded-lg border border-neutral-200 bg-neutral-50 px-2 py-1 text-xs outline-none dark:border-neutral-700 dark:bg-neutral-800"
+                    className="font-tabular w-24 rounded-lg border border-input bg-secondary/50 px-2 py-1 text-xs text-foreground outline-none transition-colors duration-150 focus:border-ring focus:ring-2 focus:ring-ring/30"
                   />
-                  <button
-                    onClick={() => saveBudget(c.id, c.id)}
-                    className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-medium text-white"
-                  >
+                  <Button size="sm" onClick={() => saveBudget(c.id, c.id)}>
                     Save
-                  </button>
+                  </Button>
                 </div>
               </div>
               {budget && (
@@ -123,7 +122,7 @@ export default function BudgetsPage() {
             </div>
           );
         })}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

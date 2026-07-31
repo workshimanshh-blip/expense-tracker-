@@ -11,7 +11,9 @@ import {
   Wallet,
   Lock,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { isCloudSyncEnabled } from "@/lib/config";
+import { Sidebar as SidebarShell, DesktopSidebar } from "@/components/ui/sidebar";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -32,47 +34,63 @@ export function Sidebar() {
 
   return (
     <>
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-neutral-200 bg-white px-4 py-6 md:flex dark:border-neutral-800 dark:bg-neutral-900">
-        <div className="mb-8 flex items-center gap-2 px-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500 text-white">
-            <Wallet size={18} />
-          </div>
-          <span className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
-            Kharcha
-          </span>
-        </div>
-        <nav className="flex flex-1 flex-col gap-1">
-          {NAV_ITEMS.map((item) => {
-            const active = pathname.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  active
-                    ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
-                    : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
-                }`}
+      <div className="hidden md:block">
+        <SidebarShell animate>
+          <DesktopSidebar className="justify-between border-r border-border/60">
+            <div className="flex flex-1 flex-col overflow-hidden">
+              <div className="mb-8 flex items-center gap-2 px-1">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_0_24px_-4px_var(--primary)]">
+                  <Wallet size={18} />
+                </div>
+                <span className="font-display truncate text-lg text-foreground">
+                  Kharcha
+                </span>
+              </div>
+              <nav className="flex flex-1 flex-col gap-1">
+                {NAV_ITEMS.map((item) => {
+                  const active = pathname.startsWith(item.href);
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="group/sidebar relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                    >
+                      {active && (
+                        <motion.span
+                          layoutId="sidebar-active-pill"
+                          className="absolute inset-0 rounded-xl bg-primary/12 ring-1 ring-primary/25"
+                          transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                        />
+                      )}
+                      <Icon
+                        size={18}
+                        className={`relative shrink-0 ${active ? "text-primary" : "text-muted-foreground"}`}
+                      />
+                      <span
+                        className={`relative ${active ? "text-foreground" : "text-muted-foreground group-hover/sidebar:text-foreground"}`}
+                      >
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+            {isCloudSyncEnabled && (
+              <button
+                onClick={lock}
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
               >
-                <Icon size={18} />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-        {isCloudSyncEnabled && (
-          <button
-            onClick={lock}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-neutral-500 transition hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
-          >
-            <Lock size={18} />
-            Lock
-          </button>
-        )}
-      </aside>
+                <Lock size={18} className="shrink-0" />
+                <span>Lock</span>
+              </button>
+            )}
+          </DesktopSidebar>
+        </SidebarShell>
+      </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-neutral-200 bg-white md:hidden dark:border-neutral-800 dark:bg-neutral-900">
+      <nav className="glass fixed inset-x-0 bottom-0 z-20 flex md:hidden">
         {NAV_ITEMS.map((item) => {
           const active = pathname.startsWith(item.href);
           const Icon = item.icon;
@@ -80,14 +98,22 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium ${
-                active
-                  ? "text-emerald-600 dark:text-emerald-400"
-                  : "text-neutral-500 dark:text-neutral-400"
-              }`}
+              className="relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium"
             >
-              <Icon size={18} />
-              {item.label}
+              {active && (
+                <motion.span
+                  layoutId="mobile-nav-active-dot"
+                  className="absolute top-1 h-1 w-1 rounded-full bg-primary"
+                  transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                />
+              )}
+              <Icon
+                size={18}
+                className={active ? "text-primary" : "text-muted-foreground"}
+              />
+              <span className={active ? "text-foreground" : "text-muted-foreground"}>
+                {item.label}
+              </span>
             </Link>
           );
         })}

@@ -23,24 +23,41 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
     <div className="h-56 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ left: -20 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="var(--border)"
+            opacity={0.6}
+          />
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 11 }}
+            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 11 }}
+            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
             axisLine={false}
             tickLine={false}
             width={48}
           />
           <Tooltip
+            cursor={{ fill: "var(--primary)", opacity: 0.08 }}
             formatter={(value) => formatCurrency(Number(value))}
-            contentStyle={{ borderRadius: 8, fontSize: 12 }}
+            contentStyle={{
+              borderRadius: 12,
+              fontSize: 12,
+              background: "var(--card)",
+              border: "1px solid var(--border)",
+              color: "var(--foreground)",
+            }}
           />
-          <Bar dataKey="total" fill="#10b981" radius={[4, 4, 0, 0]} />
+          <Bar
+            dataKey="total"
+            fill="#F59E0B"
+            radius={[6, 6, 0, 0]}
+            animationDuration={500}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

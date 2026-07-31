@@ -1,10 +1,13 @@
+"use client";
+
+import { motion } from "motion/react";
 import { formatCurrency } from "@/lib/utils";
 
 export function BudgetProgressBar({
   label,
   spent,
   limit,
-  color = "#10b981",
+  color = "#f59e0b",
 }: {
   label: string;
   spent: number;
@@ -17,25 +20,23 @@ export function BudgetProgressBar({
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-sm">
-        <span className="font-medium text-neutral-700 dark:text-neutral-200">
-          {label}
-        </span>
+        <span className="font-medium text-foreground">{label}</span>
         <span
-          className={
-            overBudget
-              ? "font-medium text-red-500"
-              : "text-neutral-500 dark:text-neutral-400"
-          }
+          className={`font-tabular ${
+            overBudget ? "font-medium text-destructive" : "text-muted-foreground"
+          }`}
         >
           {formatCurrency(spent)} / {formatCurrency(limit)}
         </span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-        <div
-          className="h-full rounded-full transition-all"
+      <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+        <motion.div
+          className="h-full rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${pct}%` }}
+          transition={{ type: "spring", stiffness: 90, damping: 20 }}
           style={{
-            width: `${pct}%`,
-            backgroundColor: overBudget ? "#ef4444" : color,
+            backgroundColor: overBudget ? "var(--destructive)" : color,
           }}
         />
       </div>

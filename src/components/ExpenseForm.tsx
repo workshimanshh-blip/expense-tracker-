@@ -5,8 +5,12 @@ import { format } from "date-fns";
 import { useData } from "@/lib/data-context";
 import { Modal } from "./Modal";
 import { NewCategoryForm } from "./NewCategoryForm";
+import { Button } from "@/components/ui/button";
 import { nextDueDate } from "@/lib/utils";
 import type { RecurrenceFrequency } from "@/lib/types";
+
+const inputClass =
+  "w-full rounded-lg border border-input bg-secondary/50 px-3 py-2 text-sm text-foreground outline-none transition-colors duration-150 focus:border-ring focus:ring-2 focus:ring-ring/30";
 
 export function ExpenseForm({ onClose }: { onClose: () => void }) {
   const { categories, addExpense } = useData();
@@ -41,7 +45,7 @@ export function ExpenseForm({ onClose }: { onClose: () => void }) {
     <Modal title="Add expense" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="mb-1 block text-xs font-medium text-neutral-500">
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">
             Amount (₹)
           </label>
           <input
@@ -51,13 +55,13 @@ export function ExpenseForm({ onClose }: { onClose: () => void }) {
             autoFocus
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 dark:border-neutral-700 dark:bg-neutral-800"
+            className={`font-tabular ${inputClass}`}
             placeholder="0"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-neutral-500">
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">
             Category
           </label>
           {!creatingCategory ? (
@@ -65,7 +69,7 @@ export function ExpenseForm({ onClose }: { onClose: () => void }) {
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 dark:border-neutral-700 dark:bg-neutral-800"
+                className={`cursor-pointer ${inputClass}`}
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -73,13 +77,14 @@ export function ExpenseForm({ onClose }: { onClose: () => void }) {
                   </option>
                 ))}
               </select>
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => setCreatingCategory(true)}
-                className="shrink-0 rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-600 dark:border-neutral-700 dark:text-neutral-300"
+                className="shrink-0"
               >
                 + New
-              </button>
+              </Button>
             </div>
           ) : (
             <NewCategoryForm
@@ -93,7 +98,7 @@ export function ExpenseForm({ onClose }: { onClose: () => void }) {
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-neutral-500">
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">
             Note (optional)
           </label>
           <input
@@ -101,58 +106,54 @@ export function ExpenseForm({ onClose }: { onClose: () => void }) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="e.g. Netflix, dinner with friends"
-            className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 dark:border-neutral-700 dark:bg-neutral-800"
+            className={inputClass}
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-neutral-500">
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">
             Date
           </label>
           <input
             type="date"
             value={spentOn}
             onChange={(e) => setSpentOn(e.target.value)}
-            className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 dark:border-neutral-700 dark:bg-neutral-800"
+            className={`cursor-pointer ${inputClass}`}
           />
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+        <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
           <input
             type="checkbox"
             checked={isRecurring}
             onChange={(e) => setIsRecurring(e.target.checked)}
-            className="h-4 w-4 rounded accent-emerald-500"
+            className="h-4 w-4 cursor-pointer rounded accent-primary"
           />
           Yeh recurring hai (subscription/bill)
         </label>
 
         {isRecurring && (
           <div>
-            <label className="mb-1 block text-xs font-medium text-neutral-500">
+            <label className="mb-1 block text-xs font-medium text-muted-foreground">
               Repeats
             </label>
             <select
               value={frequency}
               onChange={(e) => setFrequency(e.target.value as RecurrenceFrequency)}
-              className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 dark:border-neutral-700 dark:bg-neutral-800"
+              className={`cursor-pointer ${inputClass}`}
             >
               <option value="monthly">Every month</option>
               <option value="yearly">Every year</option>
             </select>
-            <p className="mt-1 text-xs text-neutral-400">
+            <p className="mt-1 text-xs text-muted-foreground">
               Next due: {nextDueDate(spentOn, frequency)}
             </p>
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full rounded-lg bg-emerald-500 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-600 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={saving} className="w-full">
           {saving ? "Saving..." : "Add expense"}
-        </button>
+        </Button>
       </form>
     </Modal>
   );

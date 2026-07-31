@@ -1,6 +1,7 @@
 "use client";
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { motion } from "motion/react";
 import { formatCurrency } from "@/lib/utils";
 
 export interface CategorySlice {
@@ -27,7 +28,9 @@ export function CategoryPieChart({ data }: { data: CategorySlice[] }) {
               nameKey="name"
               innerRadius={55}
               outerRadius={80}
-              paddingAngle={2}
+              paddingAngle={3}
+              cornerRadius={6}
+              animationDuration={500}
             >
               {data.map((entry) => (
                 <Cell key={entry.name} fill={entry.color} stroke="none" />
@@ -35,25 +38,37 @@ export function CategoryPieChart({ data }: { data: CategorySlice[] }) {
             </Pie>
             <Tooltip
               formatter={(value) => formatCurrency(Number(value))}
-              contentStyle={{ borderRadius: 8, fontSize: 12 }}
+              contentStyle={{
+                borderRadius: 12,
+                fontSize: 12,
+                background: "var(--card)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+              }}
             />
           </PieChart>
         </ResponsiveContainer>
       </div>
       <ul className="flex flex-1 flex-col gap-2">
-        {data.map((entry) => (
-          <li key={entry.name} className="flex items-center justify-between text-sm">
-            <span className="flex items-center gap-2 text-neutral-600 dark:text-neutral-300">
+        {data.map((entry, i) => (
+          <motion.li
+            key={entry.name}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.04 }}
+            className="flex items-center justify-between text-sm"
+          >
+            <span className="flex items-center gap-2 text-muted-foreground">
               <span
                 className="h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
               {entry.name}
             </span>
-            <span className="font-medium text-neutral-900 dark:text-neutral-50">
+            <span className="font-tabular font-medium text-foreground">
               {formatCurrency(entry.value)}
             </span>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>
@@ -62,7 +77,7 @@ export function CategoryPieChart({ data }: { data: CategorySlice[] }) {
 
 export function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex h-40 items-center justify-center text-center text-sm text-neutral-400">
+    <div className="flex h-40 items-center justify-center text-center text-sm text-muted-foreground">
       {message}
     </div>
   );

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "motion/react";
 import { useData } from "@/lib/data-context";
 import { CATEGORY_COLORS, ICON_OPTIONS, getIcon } from "@/lib/icon-map";
+import { Button } from "@/components/ui/button";
 import type { Category } from "@/lib/types";
 
 export function NewCategoryForm({
@@ -30,21 +32,22 @@ export function NewCategoryForm({
   }
 
   return (
-    <div className="space-y-2 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
+    <div className="space-y-3 rounded-xl border border-border bg-secondary/30 p-3">
       <input
         type="text"
         placeholder="Category name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm outline-none focus:border-emerald-500 dark:border-neutral-700 dark:bg-neutral-800"
+        className="w-full rounded-lg border border-input bg-secondary/50 px-3 py-2 text-sm text-foreground outline-none transition-colors duration-150 focus:border-ring focus:ring-2 focus:ring-ring/30"
       />
       <div className="flex flex-wrap gap-1.5">
         {CATEGORY_COLORS.map((c) => (
-          <button
+          <motion.button
             key={c}
             type="button"
+            whileTap={{ scale: 0.9 }}
             onClick={() => setColor(c)}
-            className="h-6 w-6 rounded-full"
+            className="h-6 w-6 cursor-pointer rounded-full"
             style={{
               backgroundColor: c,
               outline: color === c ? `2px solid ${c}` : "none",
@@ -57,39 +60,31 @@ export function NewCategoryForm({
         {ICON_OPTIONS.map((iconName) => {
           const Icon = getIcon(iconName);
           return (
-            <button
+            <motion.button
               key={iconName}
               type="button"
+              whileTap={{ scale: 0.92 }}
               onClick={() => setIcon(iconName)}
-              className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
+              className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border transition-colors duration-150 ${
                 icon === iconName
-                  ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10"
-                  : "border-neutral-200 dark:border-neutral-700"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon size={14} />
-            </button>
+            </motion.button>
           );
         })}
       </div>
       <div className="flex justify-end gap-2">
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-500"
-          >
+          <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         )}
-        <button
-          type="button"
-          disabled={saving}
-          onClick={handleCreate}
-          className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
-        >
+        <Button type="button" size="sm" disabled={saving} onClick={handleCreate}>
           {saving ? "Saving..." : "Save category"}
-        </button>
+        </Button>
       </div>
     </div>
   );
