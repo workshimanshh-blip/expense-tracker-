@@ -22,9 +22,9 @@ webhook has no browser to save to.
 ## Setting up the real (deployed) version
 
 This has several moving pieces because it wires together four separate
-services: Firebase (storage), Google Gemini (message parsing), Telegram
-(chat capture), and your phone (PhonePe auto-capture). All of them have a
-free tier that's plenty for personal use — this setup costs nothing to run.
+services: Firebase (storage), Groq (message parsing), Telegram (chat
+capture), and your phone (PhonePe auto-capture). All of them have a free
+tier that's plenty for personal use — this setup costs nothing to run.
 Do them in this order.
 
 ### 1. Firebase Admin credentials
@@ -42,12 +42,11 @@ Do them in this order.
    `FIREBASE_ADMIN_PROJECT_ID`, `FIREBASE_ADMIN_CLIENT_EMAIL`, and
    `FIREBASE_ADMIN_PRIVATE_KEY`. Keep this file secret; never commit it.
 
-### 2. Google Gemini API key (message parsing, free)
+### 2. Groq API key (message parsing, free)
 
-Create a free key at
-[aistudio.google.com/apikey](https://aistudio.google.com/apikey) (sign in
-with the same Google account as your Firebase project if you like) →
-`GEMINI_API_KEY`. The free tier's daily limits are far above realistic
+Create a free key at [console.groq.com/keys](https://console.groq.com/keys)
+(sign in with Google or GitHub, no billing card required) →
+`GROQ_API_KEY`. The free tier's daily limits are far above realistic
 personal-use volume (a handful of messages a day), so this costs $0.
 
 ### 3. Telegram bot
@@ -131,6 +130,6 @@ it'll get logged twice.
   localStorage-backed demo mode when cloud sync isn't enabled
 - A PIN-gated session cookie (`src/proxy.ts`) instead of full auth —
   appropriate for a single-user personal tool
-- Google Gemini (free tier, structured JSON output constrained to your real
-  category IDs) to parse free-form Hinglish expense messages
+- Groq (free tier, forced tool-calling constrained to your real category
+  IDs) to parse free-form Hinglish expense messages
 - Recharts for the category pie chart and spending trend chart
